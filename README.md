@@ -7,25 +7,25 @@ It takes care of the tedious tasks for you, user management, sending emails, err
 - I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more.
 
 ## Overview
-- JWT-based user authentication using Firebase
+- **JWT-based user authentication using Firebase**
   - Firebase provides a very generous offering of 50,000 monthly active users for free
   - You can swap firebase for a different provider with little effort
-- Grouping users into organisations with user roles
+- **Grouping users into organisations with user roles**
   - Think GitHub or Figma organization you have for your company
-- Using PostgreSQL as database
+- **Using PostgreSQL as database**
   - Swappable for a different database supported by Vapor’s ORM framework Fluent, I’d recommend sticking with PostgreSQL though
-- Sending emails using SMTP
+- **Sending emails using SMTP**
   - Send automated emails such as "You've been added to RockerAI organization as an admin."
   - Can be swapped for Sendgrid or other solution
-- Tracking of server events to Mixpanel
+- **Tracking of server events to Mixpanel**
   - Tracking important events, such as new user sign up, is more reliable to track from the backend than
   - Mixpanel offers a generous free tier and is realtime.
-- Logging of errors to Sentry
+- **Logging of errors to Sentry**
   - Automatic logging of erros and warning
   - Sentry offers a generous free plan to get you started
-- All dockerized and deployable pretty much anywhere
+- **All dockerized and deployable pretty much anywhere**
   - AWS, DigitalOcean, ...
-- Tests for everything
+- **Tests for everything**
   - Don’t worry about breaking the production, we have unit tests.
 
 
