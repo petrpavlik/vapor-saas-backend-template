@@ -50,5 +50,5 @@ You can also check out fly.io since they offer a free tier, or good old Heroku u
 
 
 ## Want to Learn More?
-I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [pre-order the course at a 50% discount](https://buy.stripe.com/3cs5l87trcH01zOfYZ). You'll get all the materials to the amail you provide during the checkout as soon as I start rolling the course out. I'll send you a confirmation email as soon as I process the email. Please reach out to petrpavlik@me.com with any issues/questions.
+I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [pre-order the course at a 50% discount](https://buy.stripe.com/4gwbLy5X02MqaModQQ). You'll get all the materials to the amail you provide during the checkout as soon as I start rolling the course out.
 
