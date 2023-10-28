@@ -1,7 +1,9 @@
 # SAAS Backend Starter Template
-This is an extension of Vapor's starter template to get the backend for your next SAAS off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
+This is an extension of Vapor's [starter template](https://github.com/vapor/template) to get the backend for your next SAAS off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
 
 It takes care of the tedious tasks for you, user management, sending emails, error logging...
+
+//TODO: list of endpoints
 
 - This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to subscribe for updates.
 - I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more.
