@@ -38,10 +38,11 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 - Clone this repo to use it as a building block for your project
 - When cloned, create `.env` file and fill in following info
   - ....
+- To be able to run the unit tests, create `.env.testing` file and fill in following info
 - Set up your local dev environment by downloading Docker and typing in following commands
   - `docker-compose build`
   - `docker-compose up db` starts a local database to develop against
-  - `docker-compose up db-test` starts a local database to run init tests against
+  - `docker-compose up db-test` starts a local database to run init tests against (this is a separate database so you don't wipe your data when running unit tests)
   - `docker-compose down` to shut the databases down, or just kill the docker app
 - Running the project locally and running the unit tests should now work
 
