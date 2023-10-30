@@ -7,7 +7,7 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 
 //TODO: list of endpoints
 
-- This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to subscribe for updates and check out the (roadmap)[https://github.com/users/petrpavlik/projects/3/views/1]
+- This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to subscribe for updates and check out the [roadmap](https://github.com/users/petrpavlik/projects/3/views/1)
 - **I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more.**
 
 ## Overview
