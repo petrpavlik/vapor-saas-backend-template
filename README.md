@@ -1,7 +1,7 @@
 # SAAS Backend Starter Template
 This is an extension of Vapor's [starter template](https://github.com/vapor/template) to get the backend for your next SAAS off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
 
-It takes care of the tedious tasks for you, user management, sending emails, analytics, error logging...
+It takes care of the tedious tasks for you, **user management, sending emails, analytics, error logging**...
 
 Every SAAS needs to handle user sign up, and if your service takes off, you'll start being asked by customers how they can invite their colleagues. This ends up being a huge pain if everything is tied to a user profile instead of an organization unit. That's why this template includes a complete organization management with 3 levels of user permission. You can create a default org with a user profile during sign up that's hidden from the user, that's fine, and you are ready for to future.
 
