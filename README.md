@@ -5,8 +5,6 @@ It takes care of the tedious tasks for you, user management, sending emails, ana
 
 Every SAAS needs to handle user sign up, and if your service takes off, you'll start being asked by customers how they can invite their colleagues. This ends up being a huge pain if everything is tied to a user profile instead of an organization unit. That's why this template includes a complete organization management with 3 levels of user permission. You can create a default org with a user profile during sign up that's hidden from the user, that's fine, and you are ready for to future.
 
-//TODO: list of endpoints
-
 - This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to subscribe for updates and check out the [roadmap](https://github.com/users/petrpavlik/projects/3/views/1)
 - **I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more.**
 
