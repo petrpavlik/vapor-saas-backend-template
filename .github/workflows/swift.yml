@@ -1,0 +1,45 @@
+# This workflow will build a Swift project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
+
+name: Swift
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_DB: vapor_database        
+          POSTGRES_PASSWORD: vapor_password
+          POSTGRES_USER: vapor_username
+        ports:
+          - 5433:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Build
+      run: swift build -v
+    - name: Run tests
+      env:
+        TEST_FIREBASE_WEB_API_KEY: ${{ secrets.TEST_FIREBASE_WEB_API_KEY }}
+        TEST_FIREBASE_USER_EMAIL: ${{ secrets.TEST_FIREBASE_USER_EMAIL }}
+        TEST_FIREBASE_USER_PASSWORD: ${{ secrets.TEST_FIREBASE_USER_PASSWORD }}
+        TEST_FIREBASE_USER_2_EMAIL: ${{ secrets.TEST_FIREBASE_USER_2_EMAIL }}
+        TEST_FIREBASE_USER_2_PASSWORD: ${{ secrets.TEST_FIREBASE_USER_2_PASSWORD }}
+        FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+      run: swift test -v
