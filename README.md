@@ -34,9 +34,20 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
  
 ## How to Use
 - Clone this repo to use it as a building block for your project
-- When cloned, create `.env` file and fill in following info
-  - ....
+- When cloned, create `.env` file and fill in following info to be able to run the app against local database.
+  - ```
+    FIREBASE_PROJECT_ID=your-firebase-project-id
+    ```
+    - This is enough to run the project locally. When deploying to production, you'll want to add the database connection keys, as well as optionally your mixpanel and sentry credentials
 - To be able to run the unit tests, create `.env.testing` file and fill in following info
+  - ```
+    TEST_FIREBASE_WEB_API_KEY=your-firebase-project-web-api-key
+    TEST_FIREBASE_USER_EMAIL=...
+    TEST_FIREBASE_USER_PASSWORD=...
+    TEST_FIREBASE_USER_2_EMAIL=...
+    TEST_FIREBASE_USER_2_PASSWORD=...
+    ```
+    - The tests will use 2 firebase user accounts to run the tests
 - Set up your local dev environment by downloading Docker and typing in following commands
   - `docker-compose build`
   - `docker-compose up db` starts a local database to develop against
@@ -54,4 +65,6 @@ You can also check out fly.io since they offer a free tier, or good old Heroku u
 
 ## Want to Learn More?
 I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [pre-order the course at a 50% discount](https://buy.stripe.com/4gwbLy5X02MqaModQQ). You'll get all the materials to the amail you provide during the checkout as soon as I start rolling the course out.
+
+I'd also encourage you to join the [vapor discord](https://discord.gg/vapor). Feel free to DM me there.
 
