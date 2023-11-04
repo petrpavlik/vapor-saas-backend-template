@@ -19,9 +19,6 @@ final class Organization: Model, Content {
     @OptionalField(key: "api_key")
     var apiKey: String?
 
-    @Children(for: \.$organization)
-    var unsubscribedLeads: [UnsubscribedLeads]
-
     @Siblings(through: ProfileOrganizationRole.self, from: \.$organization, to: \.$profile)
     public var profiles: [Profile]
     
