@@ -65,8 +65,7 @@ public func configure(_ app: Application) async throws {
     app.middleware.use(cors, at: .beginning)
 
 	var tlsConfig: TLSConfiguration = .makeClientConfiguration()
-	// Do not disable certificate verification in production. You should provide a certificate to the TLSConfiguration to verify against
-	tlsConfig.certificateVerification = .none
+	tlsConfig.certificateVerification = .noHostnameVerification		// Use `.noHostnameVerification` if your production env will be using something like nginx. Otherwise change it to `.fullVerification`. Command click to check the full details.
 	let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
 	
 	let config = SQLPostgresConfiguration(
@@ -75,7 +74,7 @@ public func configure(_ app: Application) async throws {
 		username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
 		password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
 		database: Environment.get("DATABASE_NAME") ?? "vapor_database",
-		tls: .prefer(nioSSLContext)
+		tls: app.environment == .production ? .require(nioSSLContext) : .disable
 	)
 	let postgres = DatabaseConfigurationFactory.postgres(configuration: config)
 	app.databases.use(postgres, as: .psql)
