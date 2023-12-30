@@ -65,7 +65,8 @@ public func configure(_ app: Application) async throws {
     app.middleware.use(cors, at: .beginning)
 
 	var tlsConfig: TLSConfiguration = .makeClientConfiguration()
-	tlsConfig.certificateVerification = .noHostnameVerification		// Use `.noHostnameVerification` if your production env will be using something like nginx. Otherwise change it to `.fullVerification`. Command click to check the full details.
+	// Check if you can increase the security by performing a certificate verification based on your database setup
+	tlsConfig.certificateVerification = .none
 	let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
 	
 	let config = SQLPostgresConfiguration(
