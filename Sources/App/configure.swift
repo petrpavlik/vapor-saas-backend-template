@@ -64,15 +64,22 @@ public func configure(_ app: Application) async throws {
     // cors middleware should come before default error middleware using `at: .beginning`
     app.middleware.use(cors, at: .beginning)
 
-    app.databases.use(DatabaseConfigurationFactory.postgres(configuration: .init(
-        hostname: Environment.get("DATABASE_HOST") ?? "localhost",
-        port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? (app.environment == .testing ? 5433 : 5432),
-        username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
-        password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
-        database: Environment.get("DATABASE_NAME") ?? "vapor_database",
-        tlsConfiguration: app.environment == .testing ? .none : .forClient(certificateVerification: .none))
-    ), as: .psql)
-
+	var tlsConfig: TLSConfiguration = .makeClientConfiguration()
+	// Check if you can increase the security by performing a certificate verification based on your database setup
+	tlsConfig.certificateVerification = .none
+	let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
+	
+	let config = SQLPostgresConfiguration(
+		hostname: Environment.get("DATABASE_HOST") ?? "localhost",
+		port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? (app.environment == .testing ? 5433 : 5432),
+		username: Environment.get("DATABASE_USERNAME") ?? "vapor_username",
+		password: Environment.get("DATABASE_PASSWORD") ?? "vapor_password",
+		database: Environment.get("DATABASE_NAME") ?? "vapor_database",
+		tls: app.environment == .production ? .require(nioSSLContext) : .disable
+	)
+	let postgres = DatabaseConfigurationFactory.postgres(configuration: config)
+	app.databases.use(postgres, as: .psql)
+	
     if let firebaseProjectId = Environment.process.FIREBASE_PROJECT_ID {
         app.firebaseJwt.applicationIdentifier = firebaseProjectId
     } else {
