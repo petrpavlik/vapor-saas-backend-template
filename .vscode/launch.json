@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:vapor-saas-backend-template}",
+            "name": "Debug App",
+            "program": "${workspaceFolder:vapor-saas-backend-template}/.build/debug/App",
+            "preLaunchTask": "swift: Build Debug App"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "args": [],
+            "cwd": "${workspaceFolder:vapor-saas-backend-template}",
+            "name": "Release App",
+            "program": "${workspaceFolder:vapor-saas-backend-template}/.build/release/App",
+            "preLaunchTask": "swift: Build Release App"
+        }
+    ]
+}

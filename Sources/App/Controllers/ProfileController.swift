@@ -1,12 +1,11 @@
 import Fluent
 import Vapor
-import FirebaseJWTMiddleware
 import MixpanelVapor
 
 extension Request {
     var profile: Profile {
         get async throws {
-            let token = try await self.firebaseJwt.asyncVerify()
+            let token = try await self.jwtUser
             if let profile = try await Profile.query(on: self.db).filter(\.$firebaseUserId == token.userID).first() {
                 return profile
             } else {
@@ -29,19 +28,11 @@ struct ProfileLiteDTO: Content {
 
 extension Profile {
     func toDTO() throws -> ProfileDTO {
-        guard let id else {
-            throw Abort(.internalServerError, reason: "missing profile id")
-        }
-        
-        return .init(id: id, email: email, isSubscribedToNewsletter: subscribedToNewsletterAt != nil)
+        .init(id: try requireID(), email: email, isSubscribedToNewsletter: subscribedToNewsletterAt != nil)
     }
     
     func toLiteDTO() throws -> ProfileLiteDTO {
-        guard let id else {
-            throw Abort(.internalServerError, reason: "missing profile id")
-        }
-        
-        return .init(id: id, email: email)
+        .init(id: try requireID(), email: email)
     }
 }
 
@@ -59,7 +50,7 @@ struct ProfileController: RouteCollection {
     }
 
     func create(req: Request) async throws -> ProfileDTO {
-        let token = try await req.firebaseJwt.asyncVerify()
+        let token = try await req.jwtUser
         if let profile = try await Profile.query(on: req.db).filter(\.$firebaseUserId == token.userID).first() {
 
             guard let email = token.email else {

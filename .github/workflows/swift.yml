@@ -35,11 +35,4 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Run tests
-      env:
-        TEST_FIREBASE_WEB_API_KEY: ${{ secrets.TEST_FIREBASE_WEB_API_KEY }}
-        TEST_FIREBASE_USER_EMAIL: ${{ secrets.TEST_FIREBASE_USER_EMAIL }}
-        TEST_FIREBASE_USER_PASSWORD: ${{ secrets.TEST_FIREBASE_USER_PASSWORD }}
-        TEST_FIREBASE_USER_2_EMAIL: ${{ secrets.TEST_FIREBASE_USER_2_EMAIL }}
-        TEST_FIREBASE_USER_2_PASSWORD: ${{ secrets.TEST_FIREBASE_USER_2_PASSWORD }}
-        FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
       run: swift test -v
