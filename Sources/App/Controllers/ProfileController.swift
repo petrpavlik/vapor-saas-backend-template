@@ -1,6 +1,5 @@
 import Fluent
 import Vapor
-import MixpanelVapor
 
 extension Request {
     var profile: Profile {
@@ -62,14 +61,14 @@ struct ProfileController: RouteCollection {
                 throw Abort(.badRequest, reason: "Firebase user email does not match profile email.")
             }
             
-            await req.mixpanel.track(name: "profile_created", request: req, params: ["email": email])
+            await req.trackAnalyticsEvent(name: "profile_created")
 
             return try profile.toDTO()
         } else {
             guard let email = token.email else {
                 throw Abort(.badRequest, reason: "Firebase user does not have an email address.")
             }
-            let profile = Profile(firebaseUserId: token.userID, email: email)
+            let profile = Profile(firebaseUserId: token.userID, email: email, name: token.name, avatarUrl: token.picture)
             try await profile.save(on: req.db)
             return try profile.toDTO()
         }
@@ -87,10 +86,10 @@ struct ProfileController: RouteCollection {
         if let isSubscribedToNewsletter = update.isSubscribedToNewsletter {
             if isSubscribedToNewsletter && profile.subscribedToNewsletterAt == nil {
                 profile.subscribedToNewsletterAt = Date()
-                await req.mixpanel.track(name: "profile_subscribed_to_newsletter", request: req, params: ["email": profile.email])
+                await req.trackAnalyticsEvent(name: "profile_subscribed_to_newsletter")
             } else if profile.subscribedToNewsletterAt != nil {
                 profile.subscribedToNewsletterAt = nil
-                await req.mixpanel.track(name: "profile_unsubscribed_from_newsletter", request: req, params: ["email": profile.email])
+                await req.trackAnalyticsEvent(name: "profile_unsubscribed_from_newsletter")
             }
         }
         
@@ -102,8 +101,8 @@ struct ProfileController: RouteCollection {
     func delete(req: Request) async throws -> HTTPStatus {
         // TODO: delete org if it's the last admin member
         let profile = try await req.profile
-        try await req.profile.delete(on: req.db)
-        await req.mixpanel.track(name: "profile_deleted", request: req, params: ["email": profile.email])
+        try await profile.delete(on: req.db)
+        await req.trackAnalyticsEvent(name: "profile_deleted", params: ["email": profile.email])
         return .noContent
     }
 }

@@ -11,6 +11,8 @@ import FirebaseJWTMiddleware
 protocol JWTUser {
     var userID: String { get }
     var email: String? { get }
+    var name: String? { get }
+    var picture: String? { get }
 }
 
 extension FirebaseJWTPayload : JWTUser {
