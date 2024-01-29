@@ -1,8 +1,39 @@
 import Foundation
 import Fluent
 import Vapor
-import FirebaseJWTMiddleware
-import MixpanelVapor
+
+extension Request {
+    func organization(minRole: ProfileOrganizationRole.Role) async throws -> Organization {
+        guard let organizationId = self.parameters.get("organizationID").flatMap({ UUID(uuidString: $0) }) else {
+            throw Abort(.badRequest)
+        }
+        
+        let profile = try await self.profile
+        
+        guard let profileId = profile.id else {
+            throw Abort(.internalServerError)
+        }
+        
+        guard let membership = try await ProfileOrganizationRole
+            .query(on: self.db)
+            .join(Organization.self, on: \ProfileOrganizationRole.$organization.$id == \Organization.$id)
+            .join(Profile.self, on: \ProfileOrganizationRole.$profile.$id == \Profile.$id)
+            .filter(Profile.self, \.$id == profileId)
+            .filter(Organization.self, \.$id == organizationId)
+            .first() else {
+            
+            throw Abort(.unauthorized)
+        }
+        
+        guard membership.role >= minRole else {
+            throw Abort(.unauthorized)
+        }
+        
+        try await membership.$organization.load(on: self.db)
+        
+        return membership.organization
+    }
+}
 
 enum OrganizationRoleDTO: String, Content {
     case admin
@@ -97,36 +128,13 @@ struct OrganizationController: RouteCollection {
             try await organizationRole.$profile.load(on: req.db)
         }
         
-        await req.mixpanel.track(name: "organization_created", request: req, params: ["email": profile.email, "organization_id": "\(organizationId)"])
+        await req.trackAnalyticsEvent(name: "organization_created", params: ["email": profile.email, "organization_id": "\(organizationId)"])
         
         return try organization.toDTO()
     }
     
     func patch(req: Request) async throws -> OrganizationDTO {
-        let profile = try await req.profile
-        
-        guard let organizationId = req.parameters.get("organizationID").flatMap({ UUID(uuidString: $0) }) else {
-            throw Abort(.badRequest)
-        }
-        
-        guard let profileId = profile.id else {
-            throw Abort(.internalServerError)
-        }
-        
-        guard let role = try await ProfileOrganizationRole
-            .query(on: req.db)
-            .join(Organization.self, on: \ProfileOrganizationRole.$organization.$id == \Organization.$id)
-            .join(Profile.self, on: \ProfileOrganizationRole.$profile.$id == \Profile.$id)
-            .filter(Profile.self, \.$id == profileId)
-            .filter(Organization.self, \.$id == organizationId)
-            .filter(\.$role == .admin)
-            .with(\.$organization)
-            .first() else {
-            
-            throw Abort(.unauthorized)
-        }
-        
-        let organization = role.organization
+        let organization = try await req.organization(minRole: .admin)
         
         struct OrganizationUpdateDTO: Content, Validatable {
             var name: String?
@@ -149,41 +157,17 @@ struct OrganizationController: RouteCollection {
             try await organizationRole.$profile.load(on: req.db)
         }
         
-        await req.mixpanel.track(name: "organization_updated", request: req, params: ["email": profile.email, "organization_id": "\(organizationId)"])
+        let organizationId = try organization.requireID()
+        await req.trackAnalyticsEvent(name: "organization_updated", params: ["organization_id": "\(organizationId)"])
         
         return try organization.toDTO()
     }
 
     func delete(req: Request) async throws -> HTTPStatus {
-        print("xxx delete organization")
-        let profile = try await req.profile
-        
-        guard let organizationId = req.parameters.get("organizationID").flatMap({ UUID(uuidString: $0) }) else {
-            throw Abort(.badRequest)
-        }
-        
-        try await profile.$organizationRoles.load(on: req.db)
-        
-        guard let profileId = profile.id else {
-            throw Abort(.internalServerError)
-        }
-        
-        guard let role = try await ProfileOrganizationRole
-            .query(on: req.db)
-            .join(Organization.self, on: \ProfileOrganizationRole.$organization.$id == \Organization.$id)
-            .join(Profile.self, on: \ProfileOrganizationRole.$profile.$id == \Profile.$id)
-            .filter(Profile.self, \.$id == profileId)
-            .filter(Organization.self, \.$id == organizationId)
-            .filter(\.$role == .admin)
-            .with(\.$organization)
-            .first() else {
-            
-            throw Abort(.unauthorized)
-        }
-        
-        try await role.organization.delete(on: req.db)
-      
-        await req.mixpanel.track(name: "organization_deleted", request: req, params: ["email": profile.email, "organization_id": "aaa"])
+        let organization = try await req.organization(minRole: .admin)
+        let organizationName = organization.name
+        try await organization.delete(on: req.db)
+        await req.trackAnalyticsEvent(name: "organization_deleted", params: ["organization_name": organizationName])
         
         return .noContent
     }

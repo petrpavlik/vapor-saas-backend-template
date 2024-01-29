@@ -6,6 +6,8 @@ struct CreateProfile: AsyncMigration {
             .id()
             .field("firebase_user_id", .string, .required)
             .field("email", .string, .required)
+            .field("name", .string)
+            .field("avatar_url", .string)
             .field("subscribed_to_newsletter_at", .date)
             .field("created_at", .datetime)
             .field("updated_at", .datetime)

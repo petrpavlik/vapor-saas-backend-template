@@ -3,10 +3,16 @@ import Vapor
 
 final class ProfileOrganizationRole: Model {
 
-    enum Role: String, Codable { 
+    enum Role: String, Codable, Comparable {
+        
+        static func < (lhs: ProfileOrganizationRole.Role, rhs: ProfileOrganizationRole.Role) -> Bool {
+            let order: [Role] = [.lurker, .editor, .admin]
+            return order.firstIndex(of: lhs)! < order.firstIndex(of: rhs)!
+        }
+        
         case admin
         case editor
-        case lurker 
+        case lurker
     }
 
     static let schema = "organization+profile"
