@@ -51,14 +51,15 @@ public func configure(_ app: Application) async throws {
         } else {
             app.logger.warning("Mixpanel disabled, env variables were not provided")
         }
-        
-        
     }
 
     app.migrations.add(CreateProfile())
     app.migrations.add(CreateOrganization())
     app.migrations.add(CreateProfileOrganizationRole())
+    app.migrations.add(CreateOrganizationInvite())
 
+    // You probably want to remove this and run migrations manually if
+    // you're running more than 1 instance of your backend behind a load balancer
     if try Environment.detect() != .testing {
         try await app.autoMigrate()        
     }
