@@ -17,7 +17,7 @@ extension Application {
         }
         
         // Following logic uses an email integrated through STMP to send your transactional emails
-        // You can replace this with email provider of your choice, like Amazon SES or resend.com
+        // You can replace this with email provider of your choice, like Amazon SES, resend.com, or indiepitcher.com
         
         guard let smtpHostName = Environment.process.SMTP_HOSTNAME else {
             throw Abort(.internalServerError, reason: "SMTP_HOSTNAME env variable not defined")
