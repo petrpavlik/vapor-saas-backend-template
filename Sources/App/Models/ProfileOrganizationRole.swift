@@ -20,19 +20,19 @@ final class ProfileOrganizationRole: Model {
     @ID(key: .id)
     var id: UUID?
 
-    @Parent(key: "profile_id")
+    @Parent(key: .profileId)
     var profile: Profile
 
-    @Parent(key: "organization_id")
+    @Parent(key: .organizationId)
     var organization: Organization
 
     @Enum(key: "role")
     var role: Role
     
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: .createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: .updatedAt, on: .update)
     var updatedAt: Date?
 
     init() { }
