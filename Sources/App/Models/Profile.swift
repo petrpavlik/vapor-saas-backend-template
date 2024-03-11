@@ -7,25 +7,25 @@ final class Profile: Model, Content {
     @ID(key: .id)
     var id: UUID?
 
-    @Field(key: "firebase_user_id")
+    @Field(key: .firebaseUserId)
     var firebaseUserId: String
 
-    @Field(key: "email")
+    @Field(key: .email)
     var email: String
 
-    @OptionalField(key: "subscribed_to_newsletter_at")
+    @OptionalField(key: .subscribedToNewsletterAt)
     var subscribedToNewsletterAt: Date?
     
-    @OptionalField(key: "name")
+    @OptionalField(key: .name)
     var name: String?
     
-    @OptionalField(key: "avatar_url")
+    @OptionalField(key: .avatarUrl)
     var avatarUrl: String?
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: .createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: .updatedAt, on: .update)
     var updatedAt: Date?
 
     @Siblings(through: ProfileOrganizationRole.self, from: \.$profile, to: \.$organization)

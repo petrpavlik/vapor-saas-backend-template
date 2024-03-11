@@ -11,12 +11,12 @@ struct CreateProfileOrganizationRole: AsyncMigration {
         
         try await database.schema(ProfileOrganizationRole.schema)
             .id()
-            .field("role", organizationRoles, .required)
-            .field("profile_id", .uuid, .references(Profile.schema, "id", onDelete: .cascade))
-            .field("organization_id", .uuid, .references(Organization.schema, "id", onDelete: .cascade))
-            .field("created_at", .datetime)
-            .field("updated_at", .datetime)
-            .unique(on: "profile_id", "organization_id")
+            .field(.role, organizationRoles, .required)
+            .field(.profileId, .uuid, .references(Profile.schema, "id", onDelete: .cascade))
+            .field(.organizationId, .uuid, .references(Organization.schema, "id", onDelete: .cascade))
+            .field(.createdAt, .datetime)
+            .field(.updatedAt, .datetime)
+            .unique(on: .profileId, .organizationId)
             .create()
     }
 

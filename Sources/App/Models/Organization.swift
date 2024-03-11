@@ -7,16 +7,16 @@ final class Organization: Model, Content {
     @ID(key: .id)
     var id: UUID?
 
-    @Field(key: "name")
+    @Field(key: .name)
     var name: String
 
-    @Timestamp(key: "created_at", on: .create)
+    @Timestamp(key: .createdAt, on: .create)
     var createdAt: Date?
 
-    @Timestamp(key: "updated_at", on: .update)
+    @Timestamp(key: .updatedAt, on: .update)
     var updatedAt: Date?
 
-    @OptionalField(key: "api_key")
+    @OptionalField(key: .apiKey)
     var apiKey: String?
 
     @Siblings(through: ProfileOrganizationRole.self, from: \.$organization, to: \.$profile)
