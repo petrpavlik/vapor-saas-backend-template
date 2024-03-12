@@ -60,7 +60,7 @@ You can also check out fly.io since they offer a free tier, or good old Heroku u
 
 
 ## Want to Learn More?
-I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [join the waitlist](https://tally.so/r/wbdgqg).
+I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [join the waitlist](https://forms.indiepitcher.com/BdmkCi).
 
 I'd also encourage you to join the [vapor discord](https://discord.gg/vapor). Feel free to DM me there.
 
