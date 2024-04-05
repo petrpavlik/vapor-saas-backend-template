@@ -1,4 +1,4 @@
-// swift-tools-version:5.9
+// swift-tools-version:5.10
 import PackageDescription
 
 let package = Package(
@@ -36,15 +36,6 @@ let package = Package(
             .target(name: "App"),
             .product(name: "XCTVapor", package: "vapor"),
             .product(name: "Nimble", package: "Nimble"),
-
-            // Workaround for https://github.com/apple/swift-package-manager/issues/6940
-            .product(name: "Vapor", package: "vapor"),
-            .product(name: "Fluent", package: "Fluent"),
-            .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
-            .product(name: "FirebaseJWTMiddleware", package: "vapor-firebase-jwt-middleware"),
-            .product(name: "SwiftSentry", package: "swift-sentry"),
-            "MixpanelVapor",
-            .product(name: "VaporSMTPKit", package: "VaporSMTPKit"),
         ])
     ]
 )

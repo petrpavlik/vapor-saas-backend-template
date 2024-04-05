@@ -1,4 +1,5 @@
 {
+  "originHash" : "d739504014ee5c8a0b279c240a2b0e96c5d9c509f970a6c7cd722fabaabba9cd",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -59,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent-kit.git",
       "state" : {
-        "revision" : "bb47433520116b3cf7f3567137c81106b398b77e",
-        "version" : "1.47.1"
+        "revision" : "5f0938a3f5f1a751ff7a411117bfce4efe713526",
+        "version" : "1.47.2"
       }
     },
     {
@@ -122,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-kit.git",
       "state" : {
-        "revision" : "475bf6f04ee1840917a70c32b48e4a724df4ccaf",
-        "version" : "2.12.3"
+        "revision" : "e26763a6cb8d852f7ce01b1cd5925b3d8d084801",
+        "version" : "2.13.1"
       }
     },
     {
@@ -131,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/postgres-nio.git",
       "state" : {
-        "revision" : "6f0fc054babeed13850f9014e03ced7a1d714868",
-        "version" : "1.21.0"
+        "revision" : "e345cbb9cf6052b37b27c0c4f976134fc01dbe15",
+        "version" : "1.21.1"
       }
     },
     {
@@ -203,8 +204,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "cc76b894169a3c86b71bac10c78a4db6beb7a9ad",
-        "version" : "3.2.0"
+        "revision" : "f0525da24dc3c6cbb2b6b338b65042bc91cbc4bb",
+        "version" : "3.3.0"
       }
     },
     {
@@ -329,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "3a7da193a2937472b252b8db210897e7abf37b47",
-        "version" : "4.92.4"
+        "revision" : "11cdb29614a5c7f8c5289f3c97b3398c3d89b395",
+        "version" : "4.92.5"
       }
     },
     {
@@ -356,10 +357,10 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/websocket-kit.git",
       "state" : {
-        "revision" : "53fe0639a98903858d0196b699720decb42aee7b",
-        "version" : "2.14.0"
+        "revision" : "4232d34efa49f633ba61afde365d3896fc7f8740",
+        "version" : "2.15.0"
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
