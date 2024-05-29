@@ -10,6 +10,7 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 
 - This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to give it a star and/or subscribe for updates.
 - **I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more and [join the waitlist](https://tally.so/r/wbdgqg).**
+- You can always also [become a sponsor](https://github.com/sponsors/petrpavlik)
 
 ## Overview
 - **JWT-based user authentication using Firebase**
