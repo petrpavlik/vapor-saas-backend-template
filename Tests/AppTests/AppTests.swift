@@ -7,7 +7,7 @@ import Nimble
 
 extension Application {
     static func configuredAppForTests() async throws -> Application {
-        let app = Application(.testing)
+        let app = try await Application.make(.testing)
         try await configure(app)
         
         try await app.autoRevert()
@@ -22,7 +22,7 @@ extension Application {
         
         var profile: ProfileDTO!
 
-        try test(.POST, "profile", headers: authHeader, afterResponse: { res in
+        try await test(.POST, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             profile = try res.content.decode(ProfileDTO.self)
         })
@@ -41,7 +41,7 @@ final class AppTests: XCTestCase {
     
     override func tearDown() async throws {
         
-        app.shutdown()
+        try await app.asyncShutdown()
         app = nil
     }
 
@@ -53,7 +53,7 @@ final class AppTests: XCTestCase {
         let firebaseToken = try await app.client.firebaseDefaultUserToken()
         authHeader.bearerAuthorization = .init(token: firebaseToken)
 
-        try app.test(.POST, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.POST, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
@@ -66,7 +66,7 @@ final class AppTests: XCTestCase {
         await expect { try await Organization.query(on: self.app.db).count() } == 1
         await expect { try await ProfileOrganizationRole.query(on: self.app.db).count() } == 1
         
-        try app.test(.POST, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.POST, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
@@ -77,7 +77,7 @@ final class AppTests: XCTestCase {
         await expect { try await Organization.query(on: self.app.db).count() } == 1
         await expect { try await ProfileOrganizationRole.query(on: self.app.db).count() } == 1
         
-        try app.test(.GET, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.GET, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
@@ -88,7 +88,7 @@ final class AppTests: XCTestCase {
             var isSubscribedToNewsletter: Bool?
         }
         
-        try app.test(.PATCH, "profile", headers: authHeader, beforeRequest: { request in
+        try await app.test(.PATCH, "profile", headers: authHeader, beforeRequest: { request async throws in
             try request.content.encode(PatchProfileBody(isSubscribedToNewsletter: true))
         }, afterResponse: { res in
             expect(res.status) == .ok
@@ -97,13 +97,13 @@ final class AppTests: XCTestCase {
             expect(profile.isSubscribedToNewsletter) == true
         })
         
-        try app.test(.DELETE, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.DELETE, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         
         await expect { try await Profile.query(on: self.app.db).count() } == 0
         
-        try app.test(.POST, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.POST, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
@@ -121,7 +121,7 @@ final class AppTests: XCTestCase {
         let firebaseToken = try await app.client.firebaseDefaultUserToken()
         authHeader.bearerAuthorization = .init(token: firebaseToken)
 
-        try app.test(.POST, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.POST, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
@@ -136,7 +136,7 @@ final class AppTests: XCTestCase {
         
         var organizationId: UUID!
         
-        try app.test(.POST, "organization", headers: authHeader, beforeRequest: { request in
+        try await app.test(.POST, "organization", headers: authHeader, beforeRequest: { request async throws in
             try request.content.encode(OrganizationCreateDTO(name: "Test Organization"))
         }, afterResponse: { res in
             expect(res.status) == .ok
@@ -147,12 +147,12 @@ final class AppTests: XCTestCase {
         
         await expect { try await Organization.query(on: self.app.db).count() } == 2
         
-        try app.test(.GET, "organization", headers: authHeader, afterResponse: { res in
+        try await app.test(.GET, "organization", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .ok
             let organizations = try res.content.decode([OrganizationDTO].self)
         })
         
-        try app.test(.PATCH, "organization/\(organizationId.uuidString)", headers: authHeader, beforeRequest: { request in
+        try await app.test(.PATCH, "organization/\(organizationId.uuidString)", headers: authHeader, beforeRequest: { request async throws in
             try request.content.encode(OrganizationCreateDTO(name: "New name"))
         }, afterResponse: { res in
             expect(res.status) == .ok
@@ -169,7 +169,7 @@ final class AppTests: XCTestCase {
         await expect { try await Organization.query(on: self.app.db).count() } == 2
 
         var user2Id = ""
-        try app.test(.POST, "profile", headers: authHeader2, afterResponse: { res in
+        try await app.test(.POST, "profile", headers: authHeader2, afterResponse: { res async throws in
             expect(res.status) == .ok
             let profile = try res.content.decode(ProfileDTO.self)
             expect(profile.email) == Environment.get("TEST_FIREBASE_USER_2_EMAIL")
@@ -183,53 +183,53 @@ final class AppTests: XCTestCase {
             var role: OrganizationRoleDTO
         }
         
-        try app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
+        try await app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
             try request.content.encode(UpdateRoleDTO(email: Environment.get("TEST_FIREBASE_USER_2_EMAIL")!, role: .lurker))
-        }, afterResponse: { res in
+        }, afterResponse: { res async throws in
             expect(res.status) == .ok
             let member = try res.content.decode(OrganizationMemberDTO.self)
             expect(member.role) == .lurker
         })
         
-        try app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
+        try await app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
             try request.content.encode(UpdateRoleDTO(email: Environment.get("TEST_FIREBASE_USER_2_EMAIL")!, role: .editor))
-        }, afterResponse: { res in
+        }, afterResponse: { res async throws in
             expect(res.status) == .ok
             let member = try res.content.decode(OrganizationMemberDTO.self)
             expect(member.role) == .editor
         })
         
-        try app.test(.DELETE, "organization/\(organizationId.uuidString)/members/\(Environment.get("TEST_FIREBASE_USER_2_EMAIL")!)", headers: authHeader, afterResponse: { res in
+        try await app.test(.DELETE, "organization/\(organizationId.uuidString)/members/\(Environment.get("TEST_FIREBASE_USER_2_EMAIL")!)", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         
-        try app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
+        try await app.test(.PUT, "organization/\(organizationId.uuidString)/members", headers: authHeader, beforeRequest: { request in
             try request.content.encode(UpdateRoleDTO(email: "unregistered@example.com", role: .admin))
-        }, afterResponse: { res in
+        }, afterResponse: { res async throws in
             expect(res.status) == .ok
             let member = try res.content.decode(OrganizationMemberDTO.self)
             expect(member.email) == "unregistered@example.com"
             expect(member.role) == .admin
         })
         
-        try app.test(.DELETE, "organization/\(organizationId.uuidString)/members/unregistered@example.com", headers: authHeader, afterResponse: { res in
+        try await app.test(.DELETE, "organization/\(organizationId.uuidString)/members/unregistered@example.com", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         
         await expect { try await Organization.query(on: self.app.db).count() } == 3
         
-        try app.test(.DELETE, "organization/\(organizationId.uuidString)", headers: authHeader, afterResponse: { res in
+        try await app.test(.DELETE, "organization/\(organizationId.uuidString)", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         
         await expect { try await Organization.query(on: self.app.db).count() } == 2
         await expect { try await Profile.query(on: self.app.db).count() } == 2
         
-        try app.test(.DELETE, "profile", headers: authHeader2, afterResponse: { res in
+        try await app.test(.DELETE, "profile", headers: authHeader2, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         
-        try app.test(.DELETE, "profile", headers: authHeader, afterResponse: { res in
+        try await app.test(.DELETE, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
         

@@ -11,6 +11,7 @@ struct CreateProfile: AsyncMigration {
             .field(.subscribedToNewsletterAt, .date)
             .field(.createdAt, .datetime)
             .field(.updatedAt, .datetime)
+            .field(.lastSeenAt, .datetime)
             .unique(on: .firebaseUserId)
             .unique(on: .email)
             .create()

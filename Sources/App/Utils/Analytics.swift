@@ -16,24 +16,8 @@ extension Request {
             return
         }
         
-        var params = params
-        if let profile = try? await profile {
-            
-            if let profileId = profile.id {
-                params["$user_id"] = profileId.uuidString
-            }
-            
-            params["$email"] = profile.email
-            
-            if let name = profile.name {
-                params["$name"] = name
-            }
-            if let avatarUrl = profile.avatarUrl {
-                params["$avatar"] = avatarUrl
-            }
-        }
+        let profile = try? await profile
         
-        // Log to a destination of your choice
-        await mixpanel.track(name: name, request: self, params: params)
+        await mixpanel.track(distinctId: profile?.id?.uuidString, name: name, request: self, params: params)
     }
 }

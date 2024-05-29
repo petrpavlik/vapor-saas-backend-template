@@ -41,13 +41,8 @@ public func configure(_ app: Application) async throws {
     
     if app.environment.isRelease {
         
-        if let  mixpanelProjectId = Environment.process.MIXPANEL_PROJECT_ID,
-              let mixpanelUsername = Environment.process.MIXPANEL_USERNAME,
-              let mixpanelPassword = Environment.process.MIXPANEL_PASSWORD {
-            
-            app.mixpanel.configuration = .init(projectId: mixpanelProjectId,
-                                               authorization: .init(username: mixpanelUsername,
-                                                                    password: mixpanelPassword))
+        if let  mixpanelToken = Environment.process.MIXPANEL_TOKEN {
+            app.mixpanel.configuration = .init(token: mixpanelToken)
         } else {
             app.logger.warning("Mixpanel disabled, env variables were not provided")
         }

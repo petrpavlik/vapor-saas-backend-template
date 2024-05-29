@@ -5,9 +5,10 @@ import FirebaseJWTMiddleware
 extension Request {
     var profile: Profile {
         get async throws {
-            let token = try await self.jwtUser
+            let token = try await self.firebaseJwt.asyncVerify()
             if let profile = try await Profile.query(on: self.db).filter(\.$firebaseUserId == token.userID).first() {
                 
+                profile.lastSeenAt = .now
                 try await profile.update(on: db)
                 
                 return profile
@@ -53,10 +54,12 @@ struct ProfileController: RouteCollection {
         profile.delete(use: delete)
     }
 
+    @Sendable
     func index(req: Request) async throws -> ProfileDTO {
         try await req.profile.toDTO()
     }
 
+    @Sendable
     func create(req: Request) async throws -> ProfileDTO {
         let token = try await req.firebaseJwt.asyncVerify()
         let avatarUrl = token.picture?.replacingOccurrences(of: "\\/", with: "")
@@ -81,8 +84,10 @@ struct ProfileController: RouteCollection {
                 try await profile.update(on: req.db)
             }
             
+            profile.lastSeenAt = .now
             try await profile.update(on: req.db)
             
+            try await identifyProfile(profile: profile, req: req)
 
             return try profile.toDTO()
         } else {
@@ -122,12 +127,18 @@ struct ProfileController: RouteCollection {
                 }
             }
             
-            await req.trackAnalyticsEvent(name: "profile_created")
+            let userAgent = req.headers["User-Agent"].first ?? ""
+            let languages = req.headers["Accept-Language"].first ?? ""
+            
+            await req.trackAnalyticsEvent(name: "profile_created", params: ["email": profile.email, "name": profile.name ?? "", "user_agent": userAgent, "languages": languages])
+            
+            try await identifyProfile(profile: profile, req: req)
             
             return try profile.toDTO()
         }
     }
     
+    @Sendable
     func update(req: Request) async throws -> ProfileDTO {
         let profile = try await req.profile
         
@@ -150,13 +161,56 @@ struct ProfileController: RouteCollection {
         
         try await profile.update(on: req.db)
         
+        try await identifyProfile(profile: profile, req: req)
+        
         return try profile.toDTO()
     }
 
+    @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
-        // TODO: delete org if it's the last admin member
-        try await req.profile.delete(on: req.db)
+        let profile = try await req.profile
+        let profileId = try profile.requireID()
+        
+        let organizations = try await profile.$organizations.get(on: req.db)
+        for organization in organizations {
+            let adminRoles = try await organization.$organizationRoles.get(on: req.db).filter({ $0.role == .admin })
+            if adminRoles.count == 1, adminRoles.first?.$profile.id == profileId {
+                try await organization.delete(on: req.db)
+            }
+        }
+        
+        try await unidentifyProfile(profile: profile, req: req)
+        try await profile.delete(on: req.db)
         await req.trackAnalyticsEvent(name: "profile_deleted")
         return .noContent
+    }
+    
+    // MARK: Analytics
+    
+    private func identifyProfile(profile: Profile, req: Request) async throws {
+        var properties: [String: any Content] = [
+            "$email": profile.email
+        ]
+        
+        if let name = profile.name {
+            properties["$name"] = name
+        }
+        
+        if let avatar = profile.avatarUrl {
+            properties["$avatar"] = avatar
+        }
+        
+        if let createdAt = profile.createdAt {
+            properties["$created"] = createdAt.description
+        }
+        
+        let profileId = try profile.requireID()
+        
+        await req.mixpanel.peopleSet(distinctId: profileId.uuidString, request: req, setParams: properties)
+    }
+    
+    private func unidentifyProfile(profile: Profile, req: Request) async throws {
+        let profileId = try profile.requireID()
+        await req.mixpanel.peopleDelete(distinctId: profileId.uuidString)
     }
 }

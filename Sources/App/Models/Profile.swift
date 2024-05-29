@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-final class Profile: Model, Content {
+final class Profile: Model, Content, @unchecked Sendable {
     static let schema = "profiles"
     
     @ID(key: .id)
@@ -21,6 +21,9 @@ final class Profile: Model, Content {
     
     @OptionalField(key: .avatarUrl)
     var avatarUrl: String?
+    
+    @OptionalField(key: .lastSeenAt)
+    var lastSeenAt: Date?
 
     @Timestamp(key: .createdAt, on: .create)
     var createdAt: Date?

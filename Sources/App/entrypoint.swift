@@ -1,6 +1,8 @@
 import Vapor
 import Logging
 import SwiftSentry
+import NIOCore
+import NIOPosix
 
 @main
 enum Entrypoint {
@@ -24,11 +26,12 @@ enum Entrypoint {
             return MultiplexLogHandler(logHandlers)
         }
         
-        let app = Application(env)
-        defer {
-            app.shutdown()
-            try? sentry?.shutdown()
-        }
+        let app = try await Application.make(env)
+        
+        // This attempts to install NIO as the Swift Concurrency global executor.
+        // You should not call any async functions before this point.
+        let executorTakeoverSuccess = NIOSingletons.unsafeTryInstallSingletonPosixEventLoopGroupAsConcurrencyGlobalExecutor()
+        app.logger.debug("Running with \(executorTakeoverSuccess ? "SwiftNIO" : "standard") Swift Concurrency default executor")
         
         do {
             try await configure(app)
@@ -37,5 +40,7 @@ enum Entrypoint {
             throw error
         }
         try await app.execute()
+        try await app.asyncShutdown()
+        try await sentry?.shutdown()
     }
 }

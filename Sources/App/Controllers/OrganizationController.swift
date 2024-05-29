@@ -121,6 +121,7 @@ struct OrganizationController: RouteCollection {
         }
     }
 
+    @Sendable
     func index(req: Request) async throws -> [OrganizationDTO] {
         let profile = try await req.profile
         try await profile.$organizations.load(on: req.db)
@@ -130,11 +131,13 @@ struct OrganizationController: RouteCollection {
             .map({ try $0.toDTO() })
     }
     
+    @Sendable
     func get(req: Request) async throws -> OrganizationDTO {
         let organization = try await req.organization(minRole: .lurker)
         return try organization.toDTO()
     }
 
+    @Sendable
     func create(req: Request) async throws -> OrganizationDTO {
         let profile = try await req.profile
         
@@ -171,6 +174,7 @@ struct OrganizationController: RouteCollection {
         return try organization.toDTO()
     }
     
+    @Sendable
     func patch(req: Request) async throws -> OrganizationDTO {
         
         let organization = try await req.organization(minRole: .admin)
@@ -201,6 +205,7 @@ struct OrganizationController: RouteCollection {
         return try organization.toDTO()
     }
 
+    @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
         let profile = try await req.profile
         
@@ -234,6 +239,7 @@ struct OrganizationController: RouteCollection {
         return .noContent
     }
     
+    @Sendable
     func putOrganizationMembership(req: Request) async throws -> OrganizationMemberDTO {
         
         let profile = try await req.profile
@@ -361,6 +367,7 @@ struct OrganizationController: RouteCollection {
         }
     }
     
+    @Sendable
     func deleteOrganizationMembership(req: Request) async throws -> HTTPStatus {
         
         let profile = try await req.profile
@@ -409,6 +416,7 @@ struct OrganizationController: RouteCollection {
         return .noContent
     }
     
+    @Sendable
     func listOrganizationMemberships(req: Request) async throws -> [OrganizationMemberDTO] {
         let organization = try await req.organization(minRole: .lurker)
         let organizationId = try organization.requireID()
