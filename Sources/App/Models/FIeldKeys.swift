@@ -19,4 +19,5 @@ extension FieldKey {
     static let role: FieldKey = "role"
     static let profileId: FieldKey = "profile_id"
     static let organizationId: FieldKey = "organization_id"
+    static let lastSeenAt: FieldKey = "last_seen_at"
 }

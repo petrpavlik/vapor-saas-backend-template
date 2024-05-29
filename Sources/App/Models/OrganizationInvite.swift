@@ -8,7 +8,7 @@
 import Fluent
 import Vapor
 
-final class OrganizationInvite: Model, Content {
+final class OrganizationInvite: Model, Content, @unchecked Sendable {
     static let schema = "organization_invites"
     
     @ID(key: .id)

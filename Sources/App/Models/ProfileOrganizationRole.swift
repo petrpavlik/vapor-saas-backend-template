@@ -1,7 +1,7 @@
 import Fluent
 import Vapor
 
-final class ProfileOrganizationRole: Model {
+final class ProfileOrganizationRole: Model, @unchecked Sendable {
 
     enum Role: String, Codable, Comparable {
         
