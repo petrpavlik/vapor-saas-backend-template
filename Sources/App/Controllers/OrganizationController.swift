@@ -307,16 +307,22 @@ struct OrganizationController: RouteCollection {
                 
                 await req.trackAnalyticsEvent(name: "organization_member_added", params: ["organization_id": organizationId.uuidString, "member_email": profileToAdd.email, "member_role": update.role.rawValue])
                 
-                let emailBody = """
-                Hi \(profileToAdd.name?.split(separator: " ").first ?? "there"),
-                
-                This is an automated message to let you know that you've been added to organization \(organization.name) as \(update.role.rawValue) by \(profile.name ?? profile.email).
-                """
-                
-                do {
-                    try await req.sendEmail(subject: "You've been added to \(organization.name)", message: emailBody, to: update.email)
-                } catch {
-                    req.logger.error("\(error)")
+                if req.application.environment != .testing {
+                    do {
+                        
+                        let emailBody = """
+                        Hi \(profileToAdd.name?.split(separator: " ").first ?? "there"),
+                        
+                        This is an automated message to let you know that you've been added to organization \(organization.name) as \(update.role.rawValue) by \(profile.name ?? profile.email).
+                        """
+                        
+                        try await req.indiePitcher.sendEmail(data: .init(to: update.email,
+                                                                         subject: "You've been ivited to \(organization.name)",
+                                                                         body: emailBody,
+                                                                         bodyFormat: .markdown))
+                    } catch {
+                        req.logger.error("\(error)")
+                    }
                 }
                 
                 return OrganizationMemberDTO(email: update.email, role: update.role, status: .joined)
@@ -348,16 +354,22 @@ struct OrganizationController: RouteCollection {
                     
                     await req.trackAnalyticsEvent(name: "organization_member_invitation_created", params: ["organization_id": organizationId.uuidString, "member_email": update.email, "member_role": update.role.rawValue])
                     
-                    let emailBody = """
-                    Hi there,
-                    
-                    This is an automated message to let you know that you've been invited to organization \(organization.name) as \(update.role.rawValue) by \(profile.name ?? profile.email).
-                    """
-                    
-                    do {
-                        try await req.sendEmail(subject: "You've been ivited to \(organization.name)", message: emailBody, to: update.email)
-                    } catch {
-                        req.logger.error("\(error)")
+                    if req.application.environment != .testing {
+                        do {
+                            
+                            let emailBody = """
+                            Hi there,
+                            
+                            This is an automated message to let you know that you've been invited to organization \(organization.name) as \(update.role.rawValue) by \(profile.name ?? profile.email).
+                            """
+                            
+                            try await req.indiePitcher.sendEmail(data: .init(to: update.email,
+                                                                             subject: "You've been ivited to \(organization.name)",
+                                                                             body: emailBody,
+                                                                             bodyFormat: .markdown))
+                        } catch {
+                            req.logger.error("\(error)")
+                        }
                     }
                     
                     return OrganizationMemberDTO(email: update.email, role: update.role, status: .invited)

@@ -1,15 +1,45 @@
 import Fluent
 import Vapor
-import FirebaseJWTMiddleware
+import IndiePitcherSwift
+
+typealias MailingListPortalSessionDTO = IndiePitcherSwift.MailingListPortalSession
 
 extension Request {
     var profile: Profile {
         get async throws {
-            let token = try await self.firebaseJwt.asyncVerify()
+
+            let token = try await self.jwtUser
             if let profile = try await Profile.query(on: self.db).filter(\.$firebaseUserId == token.userID).first() {
                 
-                profile.lastSeenAt = .now
-                try await profile.update(on: db)
+                let avatarUrl = token.picture?.replacingOccurrences(of: "\\/", with: "")
+                
+                if profile.name != token.name {
+                    profile.name = token.name
+                }
+                
+                if profile.avatarUrl != avatarUrl {
+                    profile.avatarUrl = avatarUrl
+                }
+                
+                let hasChanges = profile.hasChanges
+                
+                let now = Date.now
+                let prevLastSeenAt = profile.lastSeenAt ?? .distantPast
+                
+                var shouldUpdateLastActive = false
+                
+                // do this only once a minute
+                if prevLastSeenAt.distance(to: now) > 60 {
+                    profile.lastSeenAt = now
+                    try await profile.update(on: db)
+                    shouldUpdateLastActive = true
+                }
+                
+                if hasChanges {
+                    try await identifyProfile(profile: profile, req: self, isNewProfile: false, refreshMixpanelOnly: false)
+                } else if shouldUpdateLastActive {
+                    try await identifyProfile(profile: profile, req: self, isNewProfile: false, refreshMixpanelOnly: true)
+                }
                 
                 return profile
                 
@@ -50,7 +80,6 @@ struct ProfileController: RouteCollection {
         let profile = routes.grouped("profile")
         profile.get(use: index)
         profile.post(use: create)
-        profile.patch(use: update)
         profile.delete(use: delete)
     }
 
@@ -61,7 +90,7 @@ struct ProfileController: RouteCollection {
 
     @Sendable
     func create(req: Request) async throws -> ProfileDTO {
-        let token = try await req.firebaseJwt.asyncVerify()
+        let token = try await req.jwtUser
         let avatarUrl = token.picture?.replacingOccurrences(of: "\\/", with: "")
         if let profile = try await Profile.query(on: req.db).filter(\.$firebaseUserId == token.userID).first() {
 
@@ -84,10 +113,14 @@ struct ProfileController: RouteCollection {
                 try await profile.update(on: req.db)
             }
             
+            let hasChanges = profile.hasChanges
+            
             profile.lastSeenAt = .now
             try await profile.update(on: req.db)
             
-            try await identifyProfile(profile: profile, req: req)
+            if hasChanges {
+                try await identifyProfile(profile: profile, req: req, isNewProfile: false, refreshMixpanelOnly: false)
+            }
 
             return try profile.toDTO()
         } else {
@@ -132,39 +165,11 @@ struct ProfileController: RouteCollection {
             
             await req.trackAnalyticsEvent(name: "profile_created", params: ["email": profile.email, "name": profile.name ?? "", "user_agent": userAgent, "languages": languages])
             
-            try await identifyProfile(profile: profile, req: req)
+            try await identifyProfile(profile: profile, req: req, isNewProfile: true, refreshMixpanelOnly: false)
             
             return try profile.toDTO()
         }
-    }
-    
-    @Sendable
-    func update(req: Request) async throws -> ProfileDTO {
-        let profile = try await req.profile
-        
-        struct ProfileUpdateDTO: Content {
-            var isSubscribedToNewsletter: Bool?
-        }
-        
-//        try ProfileUpdateDTO.validate(content: req)
-        let update = try req.content.decode(ProfileUpdateDTO.self)
-        
-        if let isSubscribedToNewsletter = update.isSubscribedToNewsletter {
-            if isSubscribedToNewsletter && profile.subscribedToNewsletterAt == nil {
-                profile.subscribedToNewsletterAt = Date()
-                await req.trackAnalyticsEvent(name: "profile_subscribed_to_newsletter")
-            } else if profile.subscribedToNewsletterAt != nil {
-                profile.subscribedToNewsletterAt = nil
-                await req.trackAnalyticsEvent(name: "profile_unsubscribed_from_newsletter")
-            }
-        }
-        
-        try await profile.update(on: req.db)
-        
-        try await identifyProfile(profile: profile, req: req)
-        
-        return try profile.toDTO()
-    }
+    }    
 
     @Sendable
     func delete(req: Request) async throws -> HTTPStatus {
@@ -185,32 +190,89 @@ struct ProfileController: RouteCollection {
         return .noContent
     }
     
-    // MARK: Analytics
+    @Sendable
+    func createPortalSession(req: Request) async throws -> MailingListPortalSessionDTO {
+        let profile = try await req.profile
+        
+        struct Payload: Content {
+            var returnURL: URL
+        }
+        
+        let payload = try req.content.decode(Payload.self)
+        
+        return try await req.indiePitcher.createMailingListsPortalSession(contactEmail: profile.email, returnURL: payload.returnURL).data
+    }
+}
+
+private func identifyProfile(profile: Profile, req: Request, isNewProfile: Bool, refreshMixpanelOnly: Bool) async throws {
+    var properties: [String: any Content] = [
+        "$email": profile.email
+    ]
     
-    private func identifyProfile(profile: Profile, req: Request) async throws {
-        var properties: [String: any Content] = [
-            "$email": profile.email
-        ]
-        
-        if let name = profile.name {
-            properties["$name"] = name
-        }
-        
-        if let avatar = profile.avatarUrl {
-            properties["$avatar"] = avatar
-        }
-        
-        if let createdAt = profile.createdAt {
-            properties["$created"] = createdAt.description
-        }
-        
-        let profileId = try profile.requireID()
-        
-        await req.mixpanel.peopleSet(distinctId: profileId.uuidString, request: req, setParams: properties)
+    if let name = profile.name {
+        properties["$name"] = name
     }
     
-    private func unidentifyProfile(profile: Profile, req: Request) async throws {
-        let profileId = try profile.requireID()
-        await req.mixpanel.peopleDelete(distinctId: profileId.uuidString)
+    if let avatar = profile.avatarUrl {
+        properties["$avatar"] = avatar
+    }
+    
+    if let createdAt = profile.createdAt {
+        properties["$created"] = createdAt.description
+    }
+    
+    let profileId = try profile.requireID()
+    
+    await req.mixpanel.peopleSet(distinctId: profileId.uuidString, request: req, setParams: properties)
+    
+    if req.application.environment != .testing {
+        do {
+            
+            if refreshMixpanelOnly == false {
+                try await req.indiePitcher.addContact(contact: .init(email: profile.email,
+                                                                     userId: profileId.uuidString,
+                                                                     avatarUrl: profile.avatarUrl,
+                                                                     name: profile.name,
+                                                                     updateIfExists: true,
+                                                                     subscribedToLists: isNewProfile ? ["onboarding", "product_updates"] : nil))
+            }
+            
+            if isNewProfile {
+                try await sendWelcomeOnboardingEmail(req: req, profile: profile)
+            }
+            
+        } catch {
+            req.logger.error("\(error)")
+        }
+    }
+}
+
+private func unidentifyProfile(profile: Profile, req: Request) async throws {
+    let profileId = try profile.requireID()
+    await req.mixpanel.peopleDelete(distinctId: profileId.uuidString)
+}
+
+private func sendWelcomeOnboardingEmail(req: Request, profile: Profile) async throws {
+    if req.application.environment != .testing {
+        do {
+            
+            let body = """
+            Hi {{firstName|default:"there"}},
+
+            Thanks for signing up for Welcome to SaaS Backend Template.
+
+            <br/>
+            All the best in your startup endeavours.
+            """
+            
+            try await req.indiePitcher.sendEmailToContact(data: .init(contactEmail: profile.email,
+                                                                      subject: "Welcome to SaaS Backend Template!",
+                                                                      body: body,
+                                                                      bodyFormat: .markdown,
+                                                                      list: "onboarding",
+                                                                      delaySeconds: 60*5))
+        } catch {
+            req.logger.error("\(error)")
+        }
     }
 }

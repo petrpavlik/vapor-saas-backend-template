@@ -9,8 +9,7 @@ It takes care of the tedious tasks for you, **user management, sending emails, a
 Every SAAS needs to handle user sign up, and if your service takes off, you'll start being asked by customers how they can invite their colleagues. This ends up being a huge pain if everything is tied to a user profile instead of an organization unit. That's why this template includes a complete organization management with 3 levels of user permission. You can create a default org with a user profile during sign up that's hidden from the user, that's fine, and you are ready for to future.
 
 - This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to give it a star and/or subscribe for updates.
-- **I'm working on a course explaining everything in in a very detailed way. Scroll down to learn more and [join the waitlist](https://tally.so/r/wbdgqg).**
-- You can always also [become a sponsor](https://github.com/sponsors/petrpavlik)
+- **I'm working on a course explaining everything in in a very detailed way. [Join the waitlist](https://tally.so/r/wbdgqg).**
 
 ## Overview
 - **JWT-based user authentication using Firebase**
@@ -20,9 +19,9 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
   - Think GitHub or Figma organization you have for your company
 - **Using PostgreSQL as database**
   - Swappable for a different database supported by Vapor’s ORM framework Fluent, I’d recommend sticking with PostgreSQL though
-- **Sending emails using SMTP**
+- **Sending emails using [IndiePitcher](https://indiepitcher.com)**
   - Send automated emails such as "You've been added to RockerAI organization as an admin."
-  - Can be swapped for Sendgrid or another solution
+  - Can be swapped for Sendgrid, Resend, or another solution
 - **Tracking of server events to Mixpanel**
   - Tracking important events, such as new user sign up, is more reliable to track from the backend than
   - Mixpanel offers a generous free tier and is realtime.
@@ -56,12 +55,6 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 
 ## Deployment
 You can deploy your backend anywhere that supports Docker. An obvious choice for many people would be AWS, I'm personally a fan of [Digital Ocean's App Platform](https://m.do.co/c/9e21fc78af92). 
-You can also check out fly.io since they offer a free tier, or good old Heroku using the swift buildpack.
-
-
-
-## Want to Learn More?
-I'm hard at work working on a video course providing a detailed walk through of this template and Vapor framework in general. If you're interested, or would just like to support further development, you can [join the waitlist](https://forms.indiepitcher.com/BdmkCi).
 
 I'd also encourage you to join the [vapor discord](https://discord.gg/vapor). Feel free to DM me there.
 

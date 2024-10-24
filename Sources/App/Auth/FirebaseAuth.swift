@@ -6,7 +6,7 @@
 //
 
 import Vapor
-import FirebaseJWTMiddleware
+import JWT
 
 protocol JWTUser {
     var userID: String { get }
@@ -15,7 +15,7 @@ protocol JWTUser {
     var picture: String? { get }
 }
 
-extension FirebaseJWTPayload : JWTUser {
+extension FirebaseAuthIdentityToken : JWTUser {
     
 }
 
@@ -23,7 +23,7 @@ extension Request {
     var jwtUser: some JWTUser {
         get async throws {
             // This is where you can swap Firebase Auth for another JWT-based provider (Amazon Congnito, Clerk, ...)
-            try await self.firebaseJwt.asyncVerify()
+            try await jwt.firebaseAuth.verify()
         }
     }
 }

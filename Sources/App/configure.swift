@@ -34,7 +34,7 @@ public func configure(_ app: Application) async throws {
 	app.databases.use(postgres, as: .psql)
 	
     if let firebaseProjectId = Environment.process.FIREBASE_PROJECT_ID {
-        app.firebaseJwt.applicationIdentifier = firebaseProjectId
+        app.jwt.firebaseAuth.applicationIdentifier = firebaseProjectId
     } else {
         fatalError("FIREBASE_PROJECT_ID not configured")
     }
