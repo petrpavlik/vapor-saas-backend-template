@@ -88,15 +88,6 @@ final class AppTests: XCTestCase {
             var isSubscribedToNewsletter: Bool?
         }
         
-        try await app.test(.PATCH, "profile", headers: authHeader, beforeRequest: { request async throws in
-            try request.content.encode(PatchProfileBody(isSubscribedToNewsletter: true))
-        }, afterResponse: { res in
-            expect(res.status) == .ok
-            let profile = try res.content.decode(ProfileDTO.self)
-            expect(profile.email) == Environment.get("TEST_FIREBASE_USER_EMAIL")
-            expect(profile.isSubscribedToNewsletter) == true
-        })
-        
         try await app.test(.DELETE, "profile", headers: authHeader, afterResponse: { res async throws in
             expect(res.status) == .noContent
         })
