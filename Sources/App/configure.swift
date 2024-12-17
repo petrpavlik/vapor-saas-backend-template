@@ -47,6 +47,18 @@ public func configure(_ app: Application) async throws {
             app.logger.warning("Mixpanel disabled, env variables were not provided")
         }
     }
+    
+    if app.environment == .testing {
+        // inject mock services
+        app.services.emailService.use { app in
+            MockEmailService()
+        }
+    } else {
+        // inject real services
+        app.services.emailService.use { app in
+            IndiePitcherEmailService(application: app)
+        }
+    }
 
     app.migrations.add(CreateProfile())
     app.migrations.add(CreateOrganization())

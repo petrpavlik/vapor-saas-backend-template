@@ -1,8 +1,5 @@
 import Fluent
 import Vapor
-import IndiePitcherSwift
-
-typealias MailingListPortalSessionDTO = IndiePitcherSwift.MailingListPortalSession
 
 extension Request {
     var profile: Profile {
@@ -189,19 +186,6 @@ struct ProfileController: RouteCollection {
         await req.trackAnalyticsEvent(name: "profile_deleted")
         return .noContent
     }
-    
-    @Sendable
-    func createPortalSession(req: Request) async throws -> MailingListPortalSessionDTO {
-        let profile = try await req.profile
-        
-        struct Payload: Content {
-            var returnURL: URL
-        }
-        
-        let payload = try req.content.decode(Payload.self)
-        
-        return try await req.indiePitcher.createMailingListsPortalSession(contactEmail: profile.email, returnURL: payload.returnURL).data
-    }
 }
 
 private func identifyProfile(profile: Profile, req: Request, isNewProfile: Bool, refreshMixpanelOnly: Bool) async throws {
@@ -225,25 +209,18 @@ private func identifyProfile(profile: Profile, req: Request, isNewProfile: Bool,
     
     await req.mixpanel.peopleSet(distinctId: profileId.uuidString, request: req, setParams: properties)
     
-    if req.application.environment != .testing {
-        do {
-            
-            if refreshMixpanelOnly == false {
-                try await req.indiePitcher.addContact(contact: .init(email: profile.email,
-                                                                     userId: profileId.uuidString,
-                                                                     avatarUrl: profile.avatarUrl,
-                                                                     name: profile.name,
-                                                                     updateIfExists: true,
-                                                                     subscribedToLists: isNewProfile ? ["onboarding", "product_updates"] : nil))
-            }
-            
-            if isNewProfile {
-                try await sendWelcomeOnboardingEmail(req: req, profile: profile)
-            }
-            
-        } catch {
-            req.logger.error("\(error)")
+    do {
+        
+        if refreshMixpanelOnly == false {
+            try await req.services.emailService.syncContact(profile: profile, subscribedToLists: isNewProfile ? ["onboarding", "product_updates"] : nil)
         }
+        
+        if isNewProfile {
+            await sendWelcomeOnboardingEmail(req: req, profile: profile)
+        }
+        
+    } catch {
+        req.logger.error("\(error)")
     }
 }
 
@@ -252,27 +229,21 @@ private func unidentifyProfile(profile: Profile, req: Request) async throws {
     await req.mixpanel.peopleDelete(distinctId: profileId.uuidString)
 }
 
-private func sendWelcomeOnboardingEmail(req: Request, profile: Profile) async throws {
-    if req.application.environment != .testing {
-        do {
-            
-            let body = """
-            Hi {{firstName|default:"there"}},
+private func sendWelcomeOnboardingEmail(req: Request, profile: Profile) async {
+    do {
+        
+        let body = """
+        Hi {{firstName|default:"there"}},
 
-            Thanks for signing up for Welcome to SaaS Backend Template.
+        Thanks for signing up for Welcome to SaaS Backend Template.
 
-            <br/>
-            All the best in your startup endeavours.
-            """
-            
-            try await req.indiePitcher.sendEmailToContact(data: .init(contactEmail: profile.email,
-                                                                      subject: "Welcome to SaaS Backend Template!",
-                                                                      body: body,
-                                                                      bodyFormat: .markdown,
-                                                                      list: "onboarding",
-                                                                      delaySeconds: 60*5))
-        } catch {
-            req.logger.error("\(error)")
-        }
+        <br/>
+        All the best in your startup endeavours.
+        """
+        
+        try await req.services.emailService.sendPersonalizedEmail(to: profile.email, subject: "Welcome to SaaS Backend Template!", markdown: body, mailingList: "onboarding", delay: 60*5)
+    } catch {
+        // don't fail a request just because this has failed
+        req.logger.error("\(error)")
     }
 }
