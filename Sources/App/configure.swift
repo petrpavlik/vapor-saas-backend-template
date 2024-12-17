@@ -56,7 +56,8 @@ public func configure(_ app: Application) async throws {
     } else {
         // inject real services
         app.services.emailService.use { app in
-            IndiePitcherEmailService(application: app)
+            IndiePitcherEmailService(application: app) // requires IP_SECRET_API_KEY env value
+            // MockEmailService() // disable emails
         }
     }
 

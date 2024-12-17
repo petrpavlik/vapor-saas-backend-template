@@ -13,8 +13,8 @@ struct IndiePitcherEmailService: EmailService {
     
     init(application: Application) {
         
-        guard let apiKey = Environment.get("IP_V2_SECRET_API_KEY") else {
-            fatalError("IP_V2_SECRET_API_KEY env key missing")
+        guard let apiKey = Environment.get("IP_SECRET_API_KEY") else {
+            fatalError("IP_SECRET_API_KEY env key missing. Create one for free at https://indiepitcher.com or inject the mock version `MockEmailService` in `configure.swift` to run the project without crashing.")
         }
         
         indiePitcher = .init(client: application.http.client.shared,

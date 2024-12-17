@@ -41,9 +41,11 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 - When cloned, create `.env` file and fill in following info to be able to run the app against a local database.
   - ```
     FIREBASE_PROJECT_ID=your-firebase-project-id
+    IP_SECRET_API_KEY=your-indiepitcher-api-key
     ```
     - This is enough to run the project locally. When deploying to production, you'll want to add the database connection keys, as well as optionally your mixpanel and sentry credentials
     - You can copy the `FIREBASE_PROJECT_ID` from `.env.testing` to try things out, but please do create your own firebase project.
+    - `IP_SECRET_API_KEY` is for sending emails. You can create one for free by visiting https://indiepitcher.com or by replacing injecting `IndiePitcherEmailService` with `MockEmailService` to disable sending emails.
 - Set up your local dev environment, you need to spin up a database. An easy way is by downloading [Docker](https://www.docker.com) and typing in following commands
   - `docker-compose build`
   - `docker-compose up db` starts a local database to develop against
