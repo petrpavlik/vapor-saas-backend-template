@@ -1,12 +1,18 @@
 # SAAS Backend Starter Template
 
-**You can check out my project [IndiePitcher](https://indiepitcher.com) for an example of a SAAS with a backend written in Swift, using this template.**
+This is an extension of Vapor's [starter template](https://github.com/vapor/template) with added support for **user management, sending emails, analytics, error logging**... to get the backend for your (SaaS/startup/project) off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
 
-This is an extension of Vapor's [starter template](https://github.com/vapor/template) to get the backend for your next SAAS off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
+---
 
-It takes care of the tedious tasks for you, **user management, sending emails, analytics, error logging**...
+## !!NEW!!: Get Access to a Complete Backend Codebase
 
-Every SAAS needs to handle user sign up, and if your service takes off, you'll start being asked by customers how they can invite their colleagues. This ends up being a huge pain if everything is tied to a user profile instead of an organization unit. That's why this template includes a complete organization management with 3 levels of user permission. You can create a default org with a user profile during sign up that's hidden from the user, that's fine, and you are ready for to future.
+This code is extracted from my startup [IndiePitcher](https://indiepitcher.com) and free to use under a permissive MIT licence. If youre interested in additional features, such as Stripe purchases, uploading files (to S3), and many (seriously) more, you can purchase access to IndiePitcher's source code to get access to the source code of a complex backend written in Swift using Vapor that is deployed in production and making money. Read more here.
+
+---
+
+## Why do I Need This?
+
+Every SaaS needs to handle user sign up, and if your service takes off, you'll start being asked by customers how they can invite their colleagues. This ends up being a huge pain if everything is tied to a user profile instead of an organization unit. That's why this template includes a complete organization management with 3 levels of user permission. You can create a default org with a user profile during sign up that's hidden from the user, that's fine, and you are ready for to future.
 
 - This repo will be expanded and kept up to date with the latest Swift and Vapor releases, feel free to give it a star and/or subscribe for updates.
 - **I'm working on a course explaining everything in in a very detailed way. [Join the waitlist](https://tally.so/r/wbdgqg).**
@@ -14,14 +20,14 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
 ## Overview
 - **JWT-based user authentication using Firebase**
   - Firebase provides a very generous offering of 50,000 monthly active users for free
-  - You can swap firebase for a different provider with little effort
+  - You can swap firebase for a different provider
 - **Grouping users into organisations with user roles**
   - Think GitHub or Figma organization you have for your company
 - **Using PostgreSQL as database**
-  - Swappable for a different database supported by Vapor’s ORM framework Fluent, I’d recommend sticking with PostgreSQL though
+  - Swappable for a different database supported by Vapor’s ORM framework Fluent, such as SQLite.
 - **Sending emails using [IndiePitcher](https://indiepitcher.com)**
   - Send automated emails such as "You've been added to RockerAI organization as an admin."
-  - Can be swapped for Sendgrid, Resend, or another solution
+  - Can be swapped for Sendgrid, Resend, SMTP, or another solution
 - **Tracking of server events to Mixpanel**
   - Tracking important events, such as new user sign up, is more reliable to track from the backend than
   - Mixpanel offers a generous free tier and is realtime.
@@ -30,8 +36,8 @@ Every SAAS needs to handle user sign up, and if your service takes off, you'll s
   - Sentry offers a generous free plan to get you started
 - **All dockerized and deployable pretty much anywhere**
   - AWS, DigitalOcean, ...
-- **Tests for everything**
-  - Don’t worry about breaking the production, we have unit tests.
+- **Unit/Integration tests**
+  - Provided code is covered by tests
 
 
  
