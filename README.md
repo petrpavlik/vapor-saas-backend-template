@@ -6,7 +6,7 @@ This is an extension of Vapor's [starter template](https://github.com/vapor/temp
 
 ## !!NEW!!: Get Access to a Complete Backend Codebase
 
-This code is extracted from my startup [IndiePitcher](https://indiepitcher.com) and free to use under a permissive MIT licence. If youre interested in additional features, such as Stripe purchases, uploading files (to S3), and many (seriously) more, you can purchase access to IndiePitcher's source code to get access to the source code of a complex backend written in Swift using Vapor that is deployed in production and making money. Read more here.
+This code is extracted from my startup [IndiePitcher](https://indiepitcher.com) and free to use under a permissive MIT licence. If youre interested in additional features, such as Stripe purchases, uploading files (to S3), and many (seriously) more, you can purchase access to IndiePitcher's source code to get access to the source code of a complex backend written in Swift using Vapor that is deployed in production and making money. [Read more and purchase here](https://github.com/petrpavlik/vapor-saas-backend-template/blob/main/PURCHASE_COMPLETE_SOURCE_CODE.md).
 
 ---
 
