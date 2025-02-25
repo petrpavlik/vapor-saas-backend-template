@@ -25,6 +25,8 @@ If you’ve found the template useful and would like to learn more, you can purc
 
 ## Additinal Features
 The codebase shows many concepts and features in addition to the base template, here’s a few:
+- OpenAI-powered email composer
+  - Learn how to integrate with OpenAI
 - Collect purchases through Stripe
   - Handle recurring subscriptions
   - Support multiple subscription tiers
