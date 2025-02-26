@@ -1,6 +1,7 @@
-import NIOSSL
 import Fluent
-import FluentPostgresDriver
+// import FluentPostgresDriver // uncomment this line to use Postgres instead of SQLite
+import FluentSQLiteDriver
+import NIOSSL
 import Vapor
 
 // configures your application
@@ -11,17 +12,31 @@ public func configure(_ app: Application) async throws {
     let corsConfiguration = CORSMiddleware.Configuration(
         allowedOrigin: .all,
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
-        allowedHeaders: [.accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent, .accessControlAllowOrigin]
+        allowedHeaders: [
+            .accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent,
+            .accessControlAllowOrigin,
+        ]
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
     // cors middleware should come before default error middleware using `at: .beginning`
     app.middleware.use(cors, at: .beginning)
 
+    // use sqlite for testing and development
+    // look bellow how to use Postgres instead of SQLite. MySQL is also supported.
+    if app.environment == .testing {
+        app.databases.use(DatabaseConfigurationFactory.sqlite(.file("db.sqlite")), as: .sqlite)
+    } else {
+        app.databases.use(DatabaseConfigurationFactory.sqlite(.file("db-test.sqlite")), as: .sqlite)
+    }
+
+    /*
+    // uncomment this block to use Postgres instead of SQLite
+
 	var tlsConfig: TLSConfiguration = .makeClientConfiguration()
 	// Check if you can increase the security by performing a certificate verification based on your database setup
 	tlsConfig.certificateVerification = .none
 	let nioSSLContext = try NIOSSLContext(configuration: tlsConfig)
-	
+
 	let config = SQLPostgresConfiguration(
 		hostname: Environment.get("DATABASE_HOST") ?? "localhost",
 		port: Environment.get("DATABASE_PORT").flatMap(Int.init(_:)) ?? (app.environment == .testing ? 5433 : 5432),
@@ -32,22 +47,23 @@ public func configure(_ app: Application) async throws {
 	)
 	let postgres = DatabaseConfigurationFactory.postgres(configuration: config)
 	app.databases.use(postgres, as: .psql)
-	
+    */
+
     if let firebaseProjectId = Environment.process.FIREBASE_PROJECT_ID {
         app.jwt.firebaseAuth.applicationIdentifier = firebaseProjectId
     } else {
         fatalError("FIREBASE_PROJECT_ID not configured")
     }
-    
+
     if app.environment.isRelease {
-        
-        if let  mixpanelToken = Environment.process.MIXPANEL_TOKEN {
+
+        if let mixpanelToken = Environment.process.MIXPANEL_TOKEN {
             app.mixpanel.configuration = .init(token: mixpanelToken)
         } else {
             app.logger.warning("Mixpanel disabled, env variables were not provided")
         }
     }
-    
+
     if app.environment == .testing {
         // inject mock services
         app.services.emailService.use { app in
@@ -56,7 +72,7 @@ public func configure(_ app: Application) async throws {
     } else {
         // inject real services
         app.services.emailService.use { app in
-            IndiePitcherEmailService(application: app) // requires IP_SECRET_API_KEY env value
+            IndiePitcherEmailService(application: app)  // requires IP_SECRET_API_KEY env value
             // MockEmailService() // disable emails
         }
     }
@@ -69,7 +85,7 @@ public func configure(_ app: Application) async throws {
     // You probably want to remove this and run migrations manually if
     // you're running more than 1 instance of your backend behind a load balancer
     if try Environment.detect() != .testing {
-        try await app.autoMigrate()        
+        try await app.autoMigrate()
     }
 
     // register routes
