@@ -1,14 +1,12 @@
-import Vapor
 import Logging
 import SwiftSentry
-import NIOCore
-import NIOPosix
+import Vapor
 
 @main
 enum Entrypoint {
     static func main() async throws {
-        let env = try Environment.detect()
-        
+        var env = try Environment.detect()
+
         let sentry: Sentry? = try {
             if env.isRelease {
                 if let sentryDsn = Environment.process.SENTRY_DSN {
@@ -17,29 +15,34 @@ enum Entrypoint {
             }
             return nil
         }()
-        
+
+        let loggerLevel = try Logger.Level.detect(from: &env)
+
         LoggingSystem.bootstrap { label in
             var logHandlers = [LogHandler]()
+
             if let sentry {
                 logHandlers.append(SentryLogHandler(label: label, sentry: sentry, level: .warning))
             }
-            logHandlers.append(StreamLogHandler.standardOutput(label: label))
+
+            let console = Terminal()
+            logHandlers.append(ConsoleLogger(label: label, console: console, level: loggerLevel))
 
             return MultiplexLogHandler(logHandlers)
         }
-        
+
         let app = try await Application.make(env)
-        
+
         do {
             try await configure(app)
+            try await app.execute()
         } catch {
             app.logger.report(error: error)
             try? await app.asyncShutdown()
             try? await sentry?.shutdown()
             throw error
         }
-        
-        try await app.execute()
+
         try await app.asyncShutdown()
         try await sentry?.shutdown()
     }

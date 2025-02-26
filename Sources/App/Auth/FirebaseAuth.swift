@@ -1,12 +1,12 @@
 //
 //  File.swift
-//  
+//
 //
 //  Created by Petr Pavlik on 21.01.2024.
 //
 
-import Vapor
 import JWT
+import Vapor
 
 protocol JWTUser {
     var userID: String { get }
@@ -15,8 +15,8 @@ protocol JWTUser {
     var picture: String? { get }
 }
 
-extension FirebaseAuthIdentityToken : JWTUser {
-    
+extension FirebaseAuthIdentityToken: JWTUser {
+
 }
 
 extension Request {
