@@ -11,7 +11,6 @@ let package = Package(
         .package(url: "https://github.com/vapor/vapor.git", from: "4.83.1"),
         // 🗄 An ORM for SQL and NoSQL databases.
         .package(url: "https://github.com/vapor/fluent.git", from: "4.8.0"),
-        // 🐘 Fluent driver for Postgres.
         // .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.7.2"), // uncomment this line to use Postgres instead of SQLite
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "5.1.0"),
