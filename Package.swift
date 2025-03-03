@@ -14,7 +14,6 @@ let package = Package(
         // .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.7.2"), // uncomment this line to use Postgres instead of SQLite
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "5.1.0"),
-        .package(url: "https://github.com/Quick/Nimble.git", from: "13.0.0"),
         .package(url: "https://github.com/petrpavlik/swift-sentry.git", from: "1.0.0"),
         .package(url: "https://github.com/petrpavlik/MixpanelVapor.git", from: "1.0.0"),
         .package(url: "https://github.com/IndiePitcher/indiepitcher-swift.git", from: "1.0.0"),
@@ -38,8 +37,7 @@ let package = Package(
             name: "AppTests",
             dependencies: [
                 .target(name: "App"),
-                .product(name: "XCTVapor", package: "vapor"),
-                .product(name: "Nimble", package: "Nimble"),
+                .product(name: "VaporTesting", package: "vapor"),
             ], swiftSettings: swiftSettings),
     ],
     swiftLanguageModes: [.v5]
