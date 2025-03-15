@@ -31,8 +31,9 @@ jobs:
           --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
-    - name: Build
-      run: swift build -v
-    - name: Run tests
-      run: swift test -v
+    - uses: mahdibm/ci/.github/workflows/run-unit-tests.yml@mmbm-caching
+    # - uses: actions/checkout@v3
+    # - name: Build
+    #   run: swift build -v
+    # - name: Run tests
+    #   run: swift test -v
