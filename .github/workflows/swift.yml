@@ -15,22 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     container: swift:6.0-noble
 
-    services:
-      postgres:
-        image: postgres:latest
-        env:
-          POSTGRES_DB: vapor_database        
-          POSTGRES_PASSWORD: vapor_password
-          POSTGRES_USER: vapor_username
-        ports:
-          - 5433:5432
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
