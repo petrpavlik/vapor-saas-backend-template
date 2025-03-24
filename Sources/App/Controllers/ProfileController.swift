@@ -175,8 +175,10 @@ struct ProfileController: RouteCollection {
             let userAgent = req.headers["User-Agent"].first ?? ""
             let languages = req.headers["Accept-Language"].first ?? ""
 
-            await req.trackAnalyticsEvent(
-                name: "profile_created",
+            let profileId = try profile.requireID()
+
+            req.services.analyticsService.track(
+                profileId: profileId, name: "profile_created",
                 params: [
                     "email": profile.email, "name": profile.name ?? "", "user_agent": userAgent,
                     "languages": languages,
@@ -206,7 +208,7 @@ struct ProfileController: RouteCollection {
 
         try await unidentifyProfile(profile: profile, req: req)
         try await profile.delete(on: req.db)
-        await req.trackAnalyticsEvent(name: "profile_deleted")
+        req.services.analyticsService.track(profileId: nil, name: "profile_deleted", params: [:])
         return .noContent
     }
 }
@@ -214,7 +216,7 @@ struct ProfileController: RouteCollection {
 private func identifyProfile(
     profile: Profile, req: Request, isNewProfile: Bool, refreshMixpanelOnly: Bool
 ) async throws {
-    var properties: [String: any Content] = [
+    var properties: [String: String] = [
         "$email": profile.email
     ]
 
@@ -232,8 +234,7 @@ private func identifyProfile(
 
     let profileId = try profile.requireID()
 
-    await req.mixpanel.peopleSet(
-        distinctId: profileId.uuidString, request: req, setParams: properties)
+    await req.services.analyticsService.peopleSet(profileId: profileId, setParams: properties)
 
     do {
 

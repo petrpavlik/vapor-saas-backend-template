@@ -1,5 +1,5 @@
 {
-  "originHash" : "d32a28466ac55ae8643f84472ae36db88099abfde4d8d5d8da0275843a4d9e6b",
+  "originHash" : "bc20feb20952fee8bccc672357298768e170969ee579ad1595e4914485a672e3",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -42,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/fluent-kit.git",
       "state" : {
-        "revision" : "4f886ebdfc7eb497bd58e622c3eacea6cad893cd",
-        "version" : "1.50.3"
+        "revision" : "f12a66814657abd2e309c273a0825c4f978acebe",
+        "version" : "1.50.4"
       }
     },
     {
@@ -87,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/petrpavlik/MixpanelVapor.git",
       "state" : {
-        "revision" : "09de904adffe3044f4e9e397826fcb2d3c7802a7",
-        "version" : "1.1.2"
+        "revision" : "9008f1c892d93308f080cc404316934871abbd6c",
+        "version" : "2.0.0"
       }
     },
     {
@@ -168,8 +168,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-certificates.git",
       "state" : {
-        "revision" : "274f8668d3ec5d2892904d8465635c5ea659f767",
-        "version" : "1.7.0"
+        "revision" : "d608282ae53b9bf2e14c8a5b67c89927ba5d7afe",
+        "version" : "1.8.1"
       }
     },
     {
@@ -186,8 +186,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "45305d32cfb830faebcaa9a7aea66ad342637518",
-        "version" : "3.11.1"
+        "revision" : "a6ce32a18b81b04ce7e897d1d98df6eb2da04786",
+        "version" : "3.12.2"
       }
     },
     {
@@ -222,8 +222,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "96a2f8a0fa41e9e09af4585e2724c4e825410b91",
-        "version" : "1.6.2"
+        "revision" : "3d8596ed08bd13520157f0355e35caed215ffbfa",
+        "version" : "1.6.3"
       }
     },
     {
@@ -231,8 +231,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-metrics.git",
       "state" : {
-        "revision" : "5e63558d12e0267782019f5dadfcae83a7d06e09",
-        "version" : "2.5.1"
+        "revision" : "44491db7cc66774ab930cf15f36324e16b06f425",
+        "version" : "2.6.1"
       }
     },
     {
@@ -285,8 +285,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-numerics.git",
       "state" : {
-        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
-        "version" : "1.0.2"
+        "revision" : "e0ec0f5f3af6f3e4d5e7a19d2af26b481acb6ba8",
+        "version" : "1.0.3"
       }
     },
     {
@@ -330,8 +330,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/vapor/vapor.git",
       "state" : {
-        "revision" : "a425e32f9b9d19c0ecab952cb4484c1c15e2536f",
-        "version" : "4.113.2"
+        "revision" : "f6459d6417d4968f91979224dd8fd38fa99b042c",
+        "version" : "4.114.0"
       }
     },
     {

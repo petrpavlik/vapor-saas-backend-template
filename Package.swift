@@ -15,7 +15,7 @@ let package = Package(
         .package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
         .package(url: "https://github.com/vapor/jwt.git", from: "5.1.0"),
         .package(url: "https://github.com/petrpavlik/swift-sentry.git", from: "1.0.0"),
-        .package(url: "https://github.com/petrpavlik/MixpanelVapor.git", from: "1.0.0"),
+        .package(url: "https://github.com/petrpavlik/MixpanelVapor.git", from: "2.0.0"),
         .package(url: "https://github.com/IndiePitcher/indiepitcher-swift.git", from: "1.0.0"),
     ],
     targets: [
@@ -30,22 +30,13 @@ let package = Package(
                 .product(name: "SwiftSentry", package: "swift-sentry"),
                 "MixpanelVapor",
                 .product(name: "IndiePitcherSwift", package: "indiepitcher-swift"),
-            ],
-            swiftSettings: swiftSettings
+            ]
         ),
         .testTarget(
             name: "AppTests",
             dependencies: [
                 .target(name: "App"),
                 .product(name: "VaporTesting", package: "vapor"),
-            ], swiftSettings: swiftSettings),
-    ],
-    swiftLanguageModes: [.v5]
-)
-
-var swiftSettings: [SwiftSetting] {
-    [
-        .enableUpcomingFeature("DisableOutwardActorInference"),
-        .enableExperimentalFeature("StrictConcurrency"),
+            ]),
     ]
-}
+)

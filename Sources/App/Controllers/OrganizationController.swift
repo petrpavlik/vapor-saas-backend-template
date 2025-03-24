@@ -151,6 +151,7 @@ struct OrganizationController: RouteCollection {
     @Sendable
     func create(req: Request) async throws -> OrganizationDTO {
         let profile = try await req.profile
+        let profileId = try profile.requireID()
 
         struct OrganizationCreateDTO: Content, Validatable {
             var name: String
@@ -180,7 +181,8 @@ struct OrganizationController: RouteCollection {
             try await organizationRole.$profile.load(on: req.db)
         }
 
-        await req.trackAnalyticsEvent(
+        req.services.analyticsService.track(
+            profileId: profileId,
             name: "organization_created", params: ["organization_id": "\(organizationId)"])
 
         return try organization.toDTO()
@@ -188,6 +190,9 @@ struct OrganizationController: RouteCollection {
 
     @Sendable
     func patch(req: Request) async throws -> OrganizationDTO {
+
+        let profile = try await req.profile
+        let profileId = try profile.requireID()
 
         let organization = try await req.organization(minRole: .admin)
 
@@ -211,7 +216,8 @@ struct OrganizationController: RouteCollection {
             try await organizationRole.$profile.load(on: req.db)
         }
 
-        await req.trackAnalyticsEvent(
+        req.services.analyticsService.track(
+            profileId: profileId,
             name: "organization_updated",
             params: ["organization_id": "\(organization.id?.uuidString ?? "???")"])
 
@@ -257,7 +263,8 @@ struct OrganizationController: RouteCollection {
 
         try await role.organization.delete(on: req.db)
 
-        await req.trackAnalyticsEvent(
+        req.services.analyticsService.track(
+            profileId: profileId,
             name: "organization_deleted",
             params: ["organization_id": "\(role.organization.id?.uuidString ?? "???")"])
 
@@ -268,6 +275,7 @@ struct OrganizationController: RouteCollection {
     func putOrganizationMembership(req: Request) async throws -> OrganizationMemberDTO {
 
         let profile = try await req.profile
+        let profileId = try profile.requireID()
         let organization = try await req.organization(minRole: .admin)
 
         guard
@@ -319,7 +327,8 @@ struct OrganizationController: RouteCollection {
             if oldRole != currentRole.role {
                 try await currentRole.update(on: req.db)
 
-                await req.trackAnalyticsEvent(
+                req.services.analyticsService.track(
+                    profileId: profileId,
                     name: "organization_member_updated",
                     params: [
                         "organization_id": organizationId.uuidString,
@@ -347,7 +356,8 @@ struct OrganizationController: RouteCollection {
                     }
                 }
 
-                await req.trackAnalyticsEvent(
+                req.services.analyticsService.track(
+                    profileId: profileId,
                     name: "organization_member_added",
                     params: [
                         "organization_id": organizationId.uuidString,
@@ -397,7 +407,8 @@ struct OrganizationController: RouteCollection {
                         email: update.email, role: .admin, organization: organization)
                     try! await invitation.create(on: req.db)
 
-                    await req.trackAnalyticsEvent(
+                    req.services.analyticsService.track(
+                        profileId: profileId,
                         name: "organization_member_invitation_created",
                         params: [
                             "organization_id": organizationId.uuidString,
@@ -427,6 +438,7 @@ struct OrganizationController: RouteCollection {
     func deleteOrganizationMembership(req: Request) async throws -> HTTPStatus {
 
         let profile = try await req.profile
+        let profileId = try profile.requireID()
         let organization = try await req.organization(minRole: .admin)
         let organizationId = try organization.requireID()
 
@@ -457,7 +469,8 @@ struct OrganizationController: RouteCollection {
 
             try await currentRole.delete(on: req.db)
 
-            await req.trackAnalyticsEvent(
+            req.services.analyticsService.track(
+                profileId: profileId,
                 name: "organization_member_removed",
                 params: [
                     "organization_id": organizationId.uuidString,
@@ -475,7 +488,8 @@ struct OrganizationController: RouteCollection {
 
             try await invitation.delete(on: req.db)
 
-            await req.trackAnalyticsEvent(
+            req.services.analyticsService.track(
+                profileId: profileId,
                 name: "organization_invitation_removed",
                 params: [
                     "organization_id": organizationId.uuidString,
