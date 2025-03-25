@@ -49,6 +49,16 @@ public func configure(_ app: Application) async throws {
 	app.databases.use(postgres, as: .psql)
     */
 
+    if app.environment != .testing {
+        app.services.analyticsService.use { app in
+            MixpanelAnalyticsService(mixpanel: app.mixpanel)
+        }
+    } else {
+        app.services.analyticsService.use { app in
+            NoOpAnalyticsService()
+        }
+    }
+
     if let firebaseProjectId = Environment.process.FIREBASE_PROJECT_ID {
         app.jwt.firebaseAuth.applicationIdentifier = firebaseProjectId
     } else {

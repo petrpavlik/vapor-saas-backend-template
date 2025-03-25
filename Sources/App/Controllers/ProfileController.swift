@@ -255,7 +255,7 @@ private func identifyProfile(
 
 private func unidentifyProfile(profile: Profile, req: Request) async throws {
     let profileId = try profile.requireID()
-    await req.mixpanel.peopleDelete(distinctId: profileId.uuidString)
+    await req.services.analyticsService.peopleDelete(profileId: profileId)
 }
 
 private func sendWelcomeOnboardingEmail(req: Request, profile: Profile) async {

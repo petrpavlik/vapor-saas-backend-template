@@ -1,4 +1,5 @@
 import Logging
+import MixpanelVapor
 import SwiftSentry
 import Vapor
 
@@ -36,6 +37,7 @@ enum Entrypoint {
         do {
             try await configure(app)
             try await app.execute()
+            await app.mixpanel.shutdown()
         } catch {
             app.logger.report(error: error)
             try? await app.asyncShutdown()
