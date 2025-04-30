@@ -1,11 +1,8 @@
 {
     "configurations": [
         {
-            "type": "lldb",
+            "type": "swift",
             "request": "launch",
-            "sourceLanguages": [
-                "swift"
-            ],
             "args": [],
             "cwd": "${workspaceFolder:vapor-saas-backend-template}",
             "name": "Debug App",
@@ -13,11 +10,8 @@
             "preLaunchTask": "swift: Build Debug App"
         },
         {
-            "type": "lldb",
+            "type": "swift",
             "request": "launch",
-            "sourceLanguages": [
-                "swift"
-            ],
             "args": [],
             "cwd": "${workspaceFolder:vapor-saas-backend-template}",
             "name": "Release App",
