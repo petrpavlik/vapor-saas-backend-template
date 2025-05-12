@@ -2,7 +2,10 @@
 
 If you’ve found the template useful and would like to learn more, you can purchase access to the source code of [IndiePitcher](https://indiepitcher.com) - a complex project using this template - for **$99**. You’ll get **updates for a year **and **access to a private Discord channel** where we can discuss the codebase and answe tour questions.
 
-**[PURCHASE HERE](https://buy.stripe.com/28oeYE06F3O34806op)**
+**[PURCHASE HERE](https://buy.polar.sh/polar_cl_qSX5fZApGIUgN30IOcH3B9pzPmY2Af1uTJw263Zry8q)**
+
+![checkout-link](https://github.com/user-attachments/assets/900345d3-5d2b-4d8a-893e-533c0b604a35)
+
 
 <br/>
 
@@ -45,7 +48,7 @@ The codebase shows many concepts and features in addition to the base template, 
 <br/>
 
 ## Purchasing Access
-- Purchase access through a Stripe checkout page **[PURCHASE HERE](https://buy.stripe.com/28oeYE06F3O34806op)**
+- Purchase access through a Stripe checkout page **[PURCHASE HERE](https://buy.polar.sh/polar_cl_qSX5fZApGIUgN30IOcH3B9pzPmY2Af1uTJw263Zry8q)**
 - Enter your GitHub username - this account will get access
 - Optionally enter your Discord username to be invited to the private channel where we can discuss the source code
 - Complete the purchase and wait up to 12 hours
