@@ -10,7 +10,7 @@ public func configure(_ app: Application) async throws {
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: .all,  // or .custom("https://app.example.com") to allowe browser (React, ...) requests only from this domain
+        allowedOrigin: .all,  // or .any(["https://app.example.com"]) to allowe browser (React, ...) requests only from this domain. You may want to enable localhost for development as well, but do it only for debug mode or something.
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
         allowedHeaders: [
             .accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent,
