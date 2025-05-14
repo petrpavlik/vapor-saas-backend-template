@@ -10,11 +10,10 @@ public func configure(_ app: Application) async throws {
     // app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
     let corsConfiguration = CORSMiddleware.Configuration(
-        allowedOrigin: .all,
+        allowedOrigin: .all,  // or .custom("https://app.example.com") to allowe browser (React, ...) requests only from this domain
         allowedMethods: [.GET, .POST, .PUT, .OPTIONS, .DELETE, .PATCH],
         allowedHeaders: [
             .accept, .authorization, .contentType, .origin, .xRequestedWith, .userAgent,
-            .accessControlAllowOrigin,
         ]
     )
     let cors = CORSMiddleware(configuration: corsConfiguration)
