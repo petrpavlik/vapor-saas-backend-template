@@ -1,6 +1,6 @@
 # SAAS Backend Starter Template
 
-This is an extension of Vapor's [starter template](https://github.com/vapor/template) with added support for **user management, sending emails, analytics, error logging**... to get the backend for your (SaaS/startup/project) off the ground. Or if you're jsut curious about server-side Swift and Vapor, and would like to see some real code.
+This is an extension of Vapor's [starter template](https://github.com/vapor/template) with added support for **user management, sending emails, analytics, error logging**... to get the backend for your (SaaS/startup/project) off the ground. Or if you're just curious about server-side Swift and Vapor, and would like to see some real code.
 
 ---
 
